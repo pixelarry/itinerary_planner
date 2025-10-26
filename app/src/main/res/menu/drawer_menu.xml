@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_about"
+        android:title="About"
+        android:icon="@drawable/ic_info" />
+    <item
+        android:id="@+id/nav_bug"
+        android:title="Report a bug"
+        android:icon="@drawable/ic_bug_report" />
+    <item
+        android:id="@+id/nav_feedback"
+        android:title="Feedback"
+        android:icon="@drawable/ic_feedback" />
+    <item
+        android:id="@+id/nav_support"
+        android:title="Support Us"
+        android:icon="@drawable/ic_support" />
+    <item
+        android:id="@+id/nav_libraries"
+        android:title="Open Source Libraries"
+        android:icon="@drawable/ic_library_books" />
+</menu>
+
