@@ -1,0 +1,14 @@
+Itinerary Planner is designed to make your travel planning easier and more productive.
+
+Features:
+
+* Plan Management - Create, view, and manage multiple travel itineraries
+* Task Scheduling - Add tasks with start/end times and duration
+* Cost Tracking - Track expenses for each activity and overall trip budget
+* Open-source - The source code is distributed under GNU GPLv3
+* 100% free and No ads - We do not charge any fee or sell ads
+
+Source Code:
+
+The source code is available at the following GitHub repository:
+[https://github.com/pixelarry/itinerary_planner]

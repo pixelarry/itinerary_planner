@@ -1,0 +1,1 @@
+A modern, open-source Android application for planning and managing travel itineraries.
