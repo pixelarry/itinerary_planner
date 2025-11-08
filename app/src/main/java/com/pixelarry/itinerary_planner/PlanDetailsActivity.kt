@@ -57,7 +57,10 @@ class PlanDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_plan_details)
+
+        setupEdgeToEdge()
 
         // Get plan data from intent
         planId = intent.getLongExtra("plan_id", 0)
@@ -76,6 +79,17 @@ class PlanDetailsActivity : AppCompatActivity() {
         setupRecyclerView()
         loadTasks()
         setupClickListeners()
+    }
+
+    private fun setupEdgeToEdge() {
+        findViewById<View>(R.id.headerContainer).applySystemBarsPadding(applyTop = true)
+
+        val recyclerView = findViewById<RecyclerView>(R.id.itineraryRecyclerView)
+        recyclerView.clipToPadding = false
+        recyclerView.applySystemBarsPadding(applyBottom = true)
+
+        findViewById<TextView>(R.id.emptyStateText).applySystemBarsPadding(applyBottom = true)
+        findViewById<FloatingActionButton>(R.id.addTaskFab).applySystemBarsMargins(applyRight = true, applyBottom = true)
     }
 
     private fun initializeViews() {

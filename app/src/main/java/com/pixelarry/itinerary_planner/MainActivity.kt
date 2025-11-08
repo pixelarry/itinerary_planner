@@ -44,11 +44,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
+
+        setupEdgeToEdge(toolbar)
 
         drawerLayout = findViewById(R.id.drawerLayout)
         drawerToggle = ActionBarDrawerToggle(
@@ -121,6 +124,20 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener {
             startActivityForResult(Intent(this, NewPlanActivity::class.java), REQ_NEW_PLAN)
         }
+    }
+
+    private fun setupEdgeToEdge(toolbar: MaterialToolbar) {
+        toolbar.applySystemBarsPadding(applyTop = true)
+
+        val recycler = findViewById<RecyclerView>(R.id.plansRecycler)
+        val emptyView = findViewById<TextView>(R.id.emptyState)
+        val fab = findViewById<FloatingActionButton>(R.id.addPlanFab)
+        val navigationView = findViewById<NavigationView>(R.id.navigationView)
+
+        recycler.applySystemBarsPadding(applyBottom = true)
+        emptyView.applySystemBarsPadding(applyBottom = true)
+        fab.applySystemBarsMargins(applyRight = true, applyBottom = true)
+        navigationView.applySystemBarsPadding(applyTop = true, applyBottom = true)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

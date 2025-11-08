@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -46,7 +47,10 @@ class NewPlanActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_new_plan)
+
+        setupEdgeToEdge()
 
         val inputTitle = findViewById<TextInputEditText>(R.id.inputTitle)
         val inputStart = findViewById<TextInputEditText>(R.id.inputStartDate)
@@ -132,6 +136,11 @@ class NewPlanActivity : AppCompatActivity() {
             setResult(RESULT_OK)
             finish()
         }
+    }
+
+    private fun setupEdgeToEdge() {
+        val scrollView = findViewById<ScrollView>(R.id.newPlanScroll)
+        scrollView.applySystemBarsPadding(applyTop = true, applyBottom = true)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

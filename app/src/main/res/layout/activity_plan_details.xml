@@ -13,6 +13,7 @@
 
         <!-- Header Section with Image and Title (Fixed) -->
         <FrameLayout
+            android:id="@+id/headerContainer"
             android:layout_width="match_parent"
             android:layout_height="300dp">
 
@@ -86,6 +87,7 @@
 
         <!-- Itinerary Section (Scrollable) -->
         <LinearLayout
+            android:id="@+id/itineraryContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
