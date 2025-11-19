@@ -4,6 +4,8 @@
 
 A modern, open-source Android application for planning and managing travel itineraries.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75" />](https://f-droid.org/packages/com.pixelarry.itinerary_planner)
+
 ## Features
 
 - **📅 Plan Management**: Create, view, and manage multiple travel itineraries
