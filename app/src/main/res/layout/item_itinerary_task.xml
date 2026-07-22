@@ -34,59 +34,118 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!-- Task Details -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/taskTitle"
-                    android:layout_width="wrap_content"
+                <!-- Task Details -->
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Task Title"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:text="Arrival" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/taskTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="8:00 AM - 8:30 AM"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp"
-                    tools:text="8:00 AM - 8:30 AM" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/taskDurationAndCost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="0h 30m • $0.00"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp"
-                    tools:text="0h 30m • $0.00" />
+                        <TextView
+                            android:id="@+id/taskTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Task Title"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="Arrival" />
+
+                        <TextView
+                            android:id="@+id/fixedTimeIndicator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="📌"
+                            android:textSize="12sp"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/taskTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="8:00 AM - 8:30 AM"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="14sp"
+                        tools:text="8:00 AM - 8:30 AM" />
+
+                    <TextView
+                        android:id="@+id/taskDurationAndCost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="0h 30m • $0.00"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="14sp"
+                        tools:text="0h 30m • $0.00" />
+
+                </LinearLayout>
+
+                <!-- Remove/Edit Button -->
+                <ImageButton
+                    android:id="@+id/removeTaskButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_delete"
+                    android:contentDescription="Remove Task"
+                    android:scaleType="centerInside"
+                    app:tint="@android:color/holo_red_dark" />
 
             </LinearLayout>
 
-            <!-- Remove Button -->
-            <ImageButton
-                android:id="@+id/removeTaskButton"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_delete"
-                android:contentDescription="Remove Task"
-                android:scaleType="centerInside"
-                app:tint="@android:color/holo_red_dark" />
+            <!-- Delay Buttons Row -->
+            <LinearLayout
+                android:id="@+id/delayButtonsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <Button
+                    android:id="@+id/delayFiveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="+5 min"
+                    android:textSize="11sp"
+                    android:minWidth="0dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginEnd="8dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+                <Button
+                    android:id="@+id/delayTenButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="+10 min"
+                    android:textSize="11sp"
+                    android:minWidth="0dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

@@ -36,7 +36,8 @@ data class Task(
     val endTime: Date,
     val duration: Long, // in minutes
     val cost: Double,
-    val date: String // formatted date string
+    val date: String, // formatted date string
+    val isFixedStartTime: Boolean = false
 )
 
 data class ItineraryItem(

@@ -142,7 +142,8 @@ class PlanDetailsActivity : AppCompatActivity() {
         adapter = ItineraryAdapter(
             tasks.toList(),
             onTaskRemoved = { task -> removeTask(task) },
-            onTaskEdit = { task -> showEditTaskDialog(task) }
+            onTaskEdit = { task -> showEditTaskDialog(task) },
+            onTaskDelay = { task, minutes -> delayTask(task, minutes) }
         )
         itineraryRecyclerView.layoutManager = LinearLayoutManager(this)
         itineraryRecyclerView.adapter = adapter
@@ -208,6 +209,7 @@ class PlanDetailsActivity : AppCompatActivity() {
         val startTimeInput = dialogView.findViewById<TextInputEditText>(R.id.startTimeInput)
         val endTimeInput = dialogView.findViewById<TextInputEditText>(R.id.endTimeInput)
         val costInput = dialogView.findViewById<TextInputEditText>(R.id.costInput)
+        val fixedStartTimeCheckbox = dialogView.findViewById<android.widget.CheckBox>(R.id.fixedStartTimeCheckbox)
 
         // Parse trip start and end dates
         val tripStartDate = parseTripDate(planStartDate)
@@ -381,7 +383,8 @@ class PlanDetailsActivity : AppCompatActivity() {
                     endTime = endTimeDate,
                     duration = duration,
                     cost = cost,
-                    date = date
+                    date = date,
+                    isFixedStartTime = fixedStartTimeCheckbox.isChecked
                 )
                 
                 addTask(task)
@@ -431,6 +434,7 @@ class PlanDetailsActivity : AppCompatActivity() {
         val startTimeInput = dialogView.findViewById<TextInputEditText>(R.id.startTimeInput)
         val endTimeInput = dialogView.findViewById<TextInputEditText>(R.id.endTimeInput)
         val costInput = dialogView.findViewById<TextInputEditText>(R.id.costInput)
+        val fixedStartTimeCheckbox = dialogView.findViewById<android.widget.CheckBox>(R.id.fixedStartTimeCheckbox)
 
         // Pre-fill fields with existing task data
         val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
@@ -439,6 +443,7 @@ class PlanDetailsActivity : AppCompatActivity() {
         startTimeInput.setText(timeFormat.format(task.startTime))
         endTimeInput.setText(timeFormat.format(task.endTime))
         costInput.setText(String.format(Locale.getDefault(), "%.2f", task.cost))
+        fixedStartTimeCheckbox.isChecked = task.isFixedStartTime
 
         // Parse trip start and end dates
         val tripStartDate = parseTripDate(planStartDate)
@@ -606,7 +611,8 @@ class PlanDetailsActivity : AppCompatActivity() {
                     endTime = endTimeDate,
                     duration = duration,
                     cost = cost,
-                    date = date
+                    date = date,
+                    isFixedStartTime = fixedStartTimeCheckbox.isChecked
                 )
 
                 updateTask(updatedTask)
@@ -626,6 +632,85 @@ class PlanDetailsActivity : AppCompatActivity() {
                 updateUI()
             }
         }
+    }
+
+    /**
+     * Delay a task by the given number of minutes and cascade the delay
+     * to all subsequent conflicting tasks on the same day.
+     * If a fixed-start-time task would need to be moved, show an error instead.
+     */
+    private fun delayTask(task: Task, delayMinutes: Int) {
+        val delayMillis = delayMinutes * 60 * 1000L
+
+        // Sort tasks for the same day by start time
+        val sameDayTasks = tasks
+            .filter { it.date == task.date }
+            .sortedBy { it.startTime }
+
+        val taskIndex = sameDayTasks.indexOfFirst { it.id == task.id }
+        if (taskIndex == -1) return
+
+        // Calculate new end time for the delayed task (start time stays the same, end time shifts)
+        val delayedTask = sameDayTasks[taskIndex]
+        val newEndTime = Date(delayedTask.endTime.time + delayMillis)
+        val newDuration = delayedTask.duration + delayMinutes
+
+        // Build the list of tasks that need shifting (the ones after this task that conflict)
+        val tasksToShift = mutableListOf<Pair<Task, Long>>() // task to shift amount in millis
+        var currentPushEnd = newEndTime
+
+        for (i in (taskIndex + 1) until sameDayTasks.size) {
+            val nextTask = sameDayTasks[i]
+            // Check if this task's start time conflicts with the pushed end time
+            if (nextTask.startTime.before(currentPushEnd)) {
+                // This task needs to be pushed
+                if (nextTask.isFixedStartTime) {
+                    // Conflict with a fixed-start-time task - show error and abort
+                    AlertDialog.Builder(this)
+                        .setTitle("Delay Conflict")
+                        .setMessage("Cannot apply delay: '${nextTask.title}' has a fixed start time and would need to be moved. Please resolve this manually.")
+                        .setPositiveButton("OK", null)
+                        .show()
+                    return
+                }
+                val shiftAmount = currentPushEnd.time - nextTask.startTime.time
+                tasksToShift.add(nextTask to shiftAmount)
+                currentPushEnd = Date(nextTask.endTime.time + shiftAmount)
+            } else {
+                // No more conflicts
+                break
+            }
+        }
+
+        // All clear — apply the delay to the original task
+        val updatedDelayedTask = delayedTask.copy(
+            endTime = newEndTime,
+            duration = newDuration
+        )
+        database.updateTask(updatedDelayedTask)
+        val delayedIndex = tasks.indexOfFirst { it.id == updatedDelayedTask.id }
+        if (delayedIndex != -1) tasks[delayedIndex] = updatedDelayedTask
+
+        // Apply shifts to subsequent tasks
+        for ((shiftTask, shiftAmount) in tasksToShift) {
+            val shiftedTask = shiftTask.copy(
+                startTime = Date(shiftTask.startTime.time + shiftAmount),
+                endTime = Date(shiftTask.endTime.time + shiftAmount)
+            )
+            database.updateTask(shiftedTask)
+            val idx = tasks.indexOfFirst { it.id == shiftedTask.id }
+            if (idx != -1) tasks[idx] = shiftedTask
+        }
+
+        updateUI()
+
+        val totalShifted = tasksToShift.size
+        val message = if (totalShifted > 0) {
+            "Delayed '${task.title}' by $delayMinutes min and shifted $totalShifted subsequent task(s)"
+        } else {
+            "Delayed '${task.title}' by $delayMinutes min"
+        }
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
     
     /**

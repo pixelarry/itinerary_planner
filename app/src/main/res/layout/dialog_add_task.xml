@@ -96,7 +96,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:hint="Cost">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -107,6 +107,15 @@
             android:text="0.00" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Fixed Start Time Checkbox -->
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/fixedStartTimeCheckbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Fixed start time (e.g. ticketed event, reservation)"
+        android:textSize="14sp" />
 
     <!-- Buttons -->
     <LinearLayout
