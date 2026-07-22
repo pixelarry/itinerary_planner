@@ -139,6 +139,19 @@ class PlansDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
         return writableDatabase.delete(TABLE_TASKS, "$COL_TASK_ID = ?", arrayOf(taskId.toString()))
     }
 
+    fun updateTask(task: Task): Int {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val values = ContentValues().apply {
+            put(COL_TITLE_TASK, task.title)
+            put(COL_START_TIME, dateFormat.format(task.startTime))
+            put(COL_END_TIME, dateFormat.format(task.endTime))
+            put(COL_DURATION, task.duration)
+            put(COL_COST, task.cost)
+            put(COL_DATE, task.date)
+        }
+        return writableDatabase.update(TABLE_TASKS, values, "$COL_TASK_ID = ?", arrayOf(task.id.toString()))
+    }
+
     fun updateTaskOrder(taskId: Long, newOrder: Int) {
         val values = ContentValues().apply {
             put(COL_TASK_ID, newOrder)

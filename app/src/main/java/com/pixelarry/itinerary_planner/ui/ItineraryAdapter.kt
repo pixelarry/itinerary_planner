@@ -29,11 +29,18 @@ import java.util.*
 
 class ItineraryAdapter(
     private var tasks: List<Task>,
-    private val onTaskRemoved: (Task) -> Unit
+    private val onTaskRemoved: (Task) -> Unit,
+    private val onTaskEdit: (Task) -> Unit = {}
 ) : RecyclerView.Adapter<ItineraryAdapter.ViewHolder>() {
 
     private val dateFormat = SimpleDateFormat("EEE MMM dd yyyy", Locale.getDefault())
     private val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+    
+    var isEditMode: Boolean = false
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     fun updateTasks(newTasks: List<Task>) {
         tasks = newTasks.sortedWith(compareBy({ it.date }, { it.startTime }))
@@ -83,8 +90,24 @@ class ItineraryAdapter(
             
             taskDurationAndCost.text = "$durationText • $${String.format("%.2f", task.cost)}"
 
-            removeTaskButton.setOnClickListener {
-                onTaskRemoved(task)
+            if (isEditMode) {
+                removeTaskButton.setImageResource(R.drawable.ic_edit)
+                removeTaskButton.imageTintList = android.content.res.ColorStateList.valueOf(
+                    itemView.context.getColor(R.color.fab_blue)
+                )
+                removeTaskButton.contentDescription = "Edit Task"
+                removeTaskButton.setOnClickListener {
+                    onTaskEdit(task)
+                }
+            } else {
+                removeTaskButton.setImageResource(R.drawable.ic_delete)
+                removeTaskButton.imageTintList = android.content.res.ColorStateList.valueOf(
+                    itemView.context.getColor(android.R.color.holo_red_dark)
+                )
+                removeTaskButton.contentDescription = "Remove Task"
+                removeTaskButton.setOnClickListener {
+                    onTaskRemoved(task)
+                }
             }
         }
 
