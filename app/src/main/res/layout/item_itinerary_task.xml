@@ -66,27 +66,35 @@
                             android:textStyle="bold"
                             tools:text="Arrival" />
 
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="4dp">
+
                         <TextView
                             android:id="@+id/fixedTimeIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="4dp"
                             android:text="📌"
                             android:textSize="12sp"
                             android:visibility="gone"
                             tools:visibility="visible" />
 
-                    </LinearLayout>
+                        <TextView
+                            android:id="@+id/taskTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="8:00 AM - 8:30 AM"
+                            android:textColor="@android:color/darker_gray"
+                            android:textSize="14sp"
+                            tools:text="8:00 AM - 8:30 AM" />
 
-                    <TextView
-                        android:id="@+id/taskTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="8:00 AM - 8:30 AM"
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="14sp"
-                        tools:text="8:00 AM - 8:30 AM" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/taskDurationAndCost"
