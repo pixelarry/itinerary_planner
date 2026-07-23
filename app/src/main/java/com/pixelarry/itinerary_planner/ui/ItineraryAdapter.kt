@@ -24,6 +24,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.pixelarry.itinerary_planner.MainActivity
 import com.pixelarry.itinerary_planner.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -94,7 +95,7 @@ class ItineraryAdapter(
                 else -> "0h ${durationMinutes}m"
             }
             
-            taskDurationAndCost.text = "$durationText • $${String.format("%.2f", task.cost)}"
+            taskDurationAndCost.text = "$durationText • ${MainActivity.getCurrencySymbol(itemView.context)}${String.format("%.2f", task.cost)}"
 
             // Fixed time indicator
             fixedTimeIndicator.visibility = if (task.isFixedStartTime) View.VISIBLE else View.GONE

@@ -126,7 +126,8 @@ class PlanDetailsActivity : AppCompatActivity() {
         // Calculate and display total cost
         val totalCost = calculateTotalCost()
         val costFormat = String.format(Locale.getDefault(), "%.2f", totalCost)
-        planDates.text = "$formattedStartDate - $formattedEndDate • $$costFormat"
+        val currencySymbol = MainActivity.getCurrencySymbol(this)
+        planDates.text = "$formattedStartDate - $formattedEndDate • $currencySymbol$costFormat"
 
         // Load image using Glide
         if (planImageUrl.isNotEmpty()) {
@@ -777,6 +778,7 @@ class PlanDetailsActivity : AppCompatActivity() {
         val formattedStartDate = startDate?.let { dateFormat.format(it) } ?: planStartDate
         val formattedEndDate = endDate?.let { dateFormat.format(it) } ?: planEndDate
         
-        planDates.text = "$formattedStartDate - $formattedEndDate • $$costFormat"
+        val currencySymbol = MainActivity.getCurrencySymbol(this)
+        planDates.text = "$formattedStartDate - $formattedEndDate • $currencySymbol$costFormat"
     }
 } 

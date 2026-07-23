@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Pixelarry
+ * Copyright (C) 2026 Pixelarry
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,13 @@
 package com.pixelarry.itinerary_planner
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
@@ -41,11 +44,38 @@ import com.pixelarry.itinerary_planner.ui.PlanUiModel
 class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
+    private lateinit var prefs: SharedPreferences
+
+    companion object {
+        private const val REQ_NEW_PLAN = 1001
+        private const val PREFS_NAME = "itinerary_planner_prefs"
+        private const val KEY_CURRENCY = "default_currency"
+
+        val CURRENCIES = arrayOf(
+            "USD ($)", "EUR (€)", "GBP (£)", "JPY (¥)", "INR (₹)",
+            "AUD (A$)", "CAD (C$)", "CHF (CHF)", "CNY (¥)", "KRW (₩)",
+            "BRL (R$)", "MXN (MX$)", "SGD (S$)", "HKD (HK$)", "SEK (kr)",
+            "NOK (kr)", "DKK (kr)", "NZD (NZ$)", "ZAR (R)", "THB (฿)"
+        )
+
+        fun getDefaultCurrency(context: Context): String {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            return prefs.getString(KEY_CURRENCY, "USD ($)") ?: "USD ($)"
+        }
+
+        fun getCurrencySymbol(context: Context): String {
+            val currency = getDefaultCurrency(context)
+            val match = Regex("\\((.+)\\)").find(currency)
+            return match?.groupValues?.get(1) ?: "$"
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -149,7 +179,43 @@ class MainActivity : AppCompatActivity() {
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true
         }
+        when (item.itemId) {
+            R.id.action_currency -> {
+                showCurrencyPicker()
+                return true
+            }
+        }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_toolbar_menu, menu)
+        val currencyItem = menu.findItem(R.id.action_currency)
+        val actionView = currencyItem.actionView
+        if (actionView != null) {
+            val currencyText = actionView.findViewById<TextView>(R.id.currencyText)
+            currencyText?.text = getCurrencySymbol(this)
+            actionView.setOnClickListener {
+                showCurrencyPicker()
+            }
+        }
+        return true
+    }
+
+    private fun showCurrencyPicker() {
+        val currentCurrency = prefs.getString(KEY_CURRENCY, "USD ($)") ?: "USD ($)"
+        val currentIndex = CURRENCIES.indexOf(currentCurrency).coerceAtLeast(0)
+
+        AlertDialog.Builder(this)
+            .setTitle("Set Default Currency")
+            .setSingleChoiceItems(CURRENCIES, currentIndex) { dialog, which ->
+                prefs.edit().putString(KEY_CURRENCY, CURRENCIES[which]).apply()
+                Toast.makeText(this, "Currency set to ${CURRENCIES[which]}", Toast.LENGTH_SHORT).show()
+                invalidateOptionsMenu()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun generateGreeting(): String {
@@ -247,10 +313,6 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Unable to open link", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    companion object {
-        private const val REQ_NEW_PLAN = 1001
     }
 }
 
