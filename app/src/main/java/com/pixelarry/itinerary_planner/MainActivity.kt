@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_about -> openUrl("https://sanandmv7.github.io/apps/itinerary-planner/")
                 R.id.nav_bug -> openUrl("https://github.com/pixelarry/itinerary_planner/issues/new")
                 R.id.nav_feedback -> openUrl("https://forms.gle/qKYahftqpdnrLhZ49")
-                R.id.nav_support -> openUrl("https://ko-fi.com/pixelarry")
+                R.id.nav_support -> openUrl("https://ko-fi.com/sanandmv")
                 R.id.nav_libraries -> {
                     val intent = Intent(this, OpenSourceLibrariesActivity::class.java)
                     startActivity(intent)
