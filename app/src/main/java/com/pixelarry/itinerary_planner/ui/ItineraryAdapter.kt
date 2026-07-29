@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Pixelarry
+ * Copyright (C) 2026 Pixelarry
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,30 @@ package com.pixelarry.itinerary_planner.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.pixelarry.itinerary_planner.MainActivity
 import com.pixelarry.itinerary_planner.R
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ItineraryAdapter(
     private var tasks: List<Task>,
-    private val onTaskRemoved: (Task) -> Unit
+    private val onTaskRemoved: (Task) -> Unit,
+    private val onTaskEdit: (Task) -> Unit = {},
+    private val onTaskDelay: (Task, Int) -> Unit = { _, _ -> }
 ) : RecyclerView.Adapter<ItineraryAdapter.ViewHolder>() {
 
     private val dateFormat = SimpleDateFormat("EEE MMM dd yyyy", Locale.getDefault())
     private val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+    
+    var isEditMode: Boolean = false
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     fun updateTasks(newTasks: List<Task>) {
         tasks = newTasks.sortedWith(compareBy({ it.date }, { it.startTime }))
@@ -59,6 +69,10 @@ class ItineraryAdapter(
         private val taskTime: TextView = itemView.findViewById(R.id.taskTime)
         private val taskDurationAndCost: TextView = itemView.findViewById(R.id.taskDurationAndCost)
         private val removeTaskButton: ImageButton = itemView.findViewById(R.id.removeTaskButton)
+        private val fixedTimeIndicator: TextView = itemView.findViewById(R.id.fixedTimeIndicator)
+        private val delayButtonsContainer: View = itemView.findViewById(R.id.delayButtonsContainer)
+        private val delayFiveButton: Button = itemView.findViewById(R.id.delayFiveButton)
+        private val delayTenButton: Button = itemView.findViewById(R.id.delayTenButton)
 
         fun bind(task: Task, position: Int) {
             // Show date header if it's the first task of the day or if it's different from previous
@@ -81,10 +95,39 @@ class ItineraryAdapter(
                 else -> "0h ${durationMinutes}m"
             }
             
-            taskDurationAndCost.text = "$durationText • $${String.format("%.2f", task.cost)}"
+            taskDurationAndCost.text = "$durationText • ${MainActivity.getCurrencySymbol(itemView.context)}${String.format("%.2f", task.cost)}"
 
-            removeTaskButton.setOnClickListener {
-                onTaskRemoved(task)
+            // Fixed time indicator
+            fixedTimeIndicator.visibility = if (task.isFixedStartTime) View.VISIBLE else View.GONE
+
+            // Edit/Delete mode
+            if (isEditMode) {
+                removeTaskButton.setImageResource(R.drawable.ic_edit)
+                removeTaskButton.imageTintList = android.content.res.ColorStateList.valueOf(
+                    itemView.context.getColor(R.color.fab_blue)
+                )
+                removeTaskButton.contentDescription = "Edit Task"
+                removeTaskButton.setOnClickListener {
+                    onTaskEdit(task)
+                }
+            } else {
+                removeTaskButton.setImageResource(R.drawable.ic_delete)
+                removeTaskButton.imageTintList = android.content.res.ColorStateList.valueOf(
+                    itemView.context.getColor(android.R.color.holo_red_dark)
+                )
+                removeTaskButton.contentDescription = "Remove Task"
+                removeTaskButton.setOnClickListener {
+                    onTaskRemoved(task)
+                }
+            }
+
+            // Delay buttons - only visible in edit mode
+            delayButtonsContainer.visibility = if (isEditMode) View.VISIBLE else View.GONE
+            delayFiveButton.setOnClickListener {
+                onTaskDelay(task, 5)
+            }
+            delayTenButton.setOnClickListener {
+                onTaskDelay(task, 10)
             }
         }
 
@@ -97,4 +140,4 @@ class ItineraryAdapter(
             }
         }
     }
-} 
+}

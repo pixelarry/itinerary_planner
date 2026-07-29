@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Pixelarry
+ * Copyright (C) 2026 Pixelarry
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,15 +48,16 @@ class PlansDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
                 "$COL_DURATION INTEGER NOT NULL, " +
                 "$COL_COST REAL NOT NULL, " +
                 "$COL_DATE TEXT NOT NULL, " +
+                "$COL_FIXED_START_TIME INTEGER NOT NULL DEFAULT 0, " +
                 "FOREIGN KEY($COL_PLAN_ID) REFERENCES $TABLE_PLANS($COL_ID) ON DELETE CASCADE" +
             ")"
         )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_TASKS")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_PLANS")
-        onCreate(db)
+        if (oldVersion < 4) {
+            db.execSQL("ALTER TABLE $TABLE_TASKS ADD COLUMN $COL_FIXED_START_TIME INTEGER NOT NULL DEFAULT 0")
+        }
     }
 
     fun insertPlan(plan: PlanUiModel) {
@@ -102,6 +103,7 @@ class PlansDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
             put(COL_DURATION, task.duration)
             put(COL_COST, task.cost)
             put(COL_DATE, task.date)
+            put(COL_FIXED_START_TIME, if (task.isFixedStartTime) 1 else 0)
         }
         return writableDatabase.insert(TABLE_TASKS, null, values)
     }
@@ -110,7 +112,7 @@ class PlansDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
         val list = mutableListOf<Task>()
         val cursor = readableDatabase.query(
             TABLE_TASKS,
-            arrayOf(COL_TASK_ID, COL_PLAN_ID, COL_TITLE_TASK, COL_START_TIME, COL_END_TIME, COL_DURATION, COL_COST, COL_DATE),
+            arrayOf(COL_TASK_ID, COL_PLAN_ID, COL_TITLE_TASK, COL_START_TIME, COL_END_TIME, COL_DURATION, COL_COST, COL_DATE, COL_FIXED_START_TIME),
             "$COL_PLAN_ID = ?",
             arrayOf(planId.toString()),
             null, null, "$COL_DATE ASC, $COL_START_TIME ASC"
@@ -127,7 +129,8 @@ class PlansDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
                         endTime = dateFormat.parse(it.getString(4)) ?: Date(),
                         duration = it.getLong(5),
                         cost = it.getDouble(6),
-                        date = it.getString(7)
+                        date = it.getString(7),
+                        isFixedStartTime = it.getInt(8) == 1
                     )
                 )
             }
@@ -137,6 +140,20 @@ class PlansDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
 
     fun deleteTask(taskId: Long): Int {
         return writableDatabase.delete(TABLE_TASKS, "$COL_TASK_ID = ?", arrayOf(taskId.toString()))
+    }
+
+    fun updateTask(task: Task): Int {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val values = ContentValues().apply {
+            put(COL_TITLE_TASK, task.title)
+            put(COL_START_TIME, dateFormat.format(task.startTime))
+            put(COL_END_TIME, dateFormat.format(task.endTime))
+            put(COL_DURATION, task.duration)
+            put(COL_COST, task.cost)
+            put(COL_DATE, task.date)
+            put(COL_FIXED_START_TIME, if (task.isFixedStartTime) 1 else 0)
+        }
+        return writableDatabase.update(TABLE_TASKS, values, "$COL_TASK_ID = ?", arrayOf(task.id.toString()))
     }
 
     fun updateTaskOrder(taskId: Long, newOrder: Int) {
@@ -153,7 +170,7 @@ class PlansDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
 
     companion object {
         private const val DB_NAME = "plans.db"
-        private const val DB_VERSION = 3
+        private const val DB_VERSION = 4
 
         private const val TABLE_PLANS = "plans"
         private const val COL_ID = "id"
@@ -171,6 +188,7 @@ class PlansDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
         private const val COL_DURATION = "duration"
         private const val COL_COST = "cost"
         private const val COL_DATE = "date"
+        private const val COL_FIXED_START_TIME = "fixed_start_time"
     }
 }
 

@@ -14,7 +14,7 @@
         android:icon="@drawable/ic_feedback" />
     <item
         android:id="@+id/nav_support"
-        android:title="Support Us"
+        android:title="Support Dev"
         android:icon="@drawable/ic_support" />
     <item
         android:id="@+id/nav_libraries"

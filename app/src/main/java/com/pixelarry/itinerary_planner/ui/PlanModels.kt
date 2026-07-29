@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Pixelarry
+ * Copyright (C) 2026 Pixelarry
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,8 @@ data class Task(
     val endTime: Date,
     val duration: Long, // in minutes
     val cost: Double,
-    val date: String // formatted date string
+    val date: String, // formatted date string
+    val isFixedStartTime: Boolean = false
 )
 
 data class ItineraryItem(
