@@ -1,6 +1,6 @@
 # Itinerary Planner
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![build](https://github.com/pixelarry/itinerary_planner/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/pixelarry/itinerary_planner/actions/workflows/android.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![build](https://github.com/sanandmv7/itinerary_planner/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/sanandmv7/itinerary_planner/actions/workflows/android.yml)
 
 A modern, open-source Android application for planning and managing travel itineraries.
 
@@ -15,13 +15,13 @@ A modern, open-source Android application for planning and managing travel itine
 ## Installation
 
 ### Manual Installation
-1. Download the latest APK from the [Releases](https://github.com/pixelarry/itinerary_planner/releases) page
+1. Download the latest APK from the [Releases](https://github.com/sanandmv7/itinerary_planner/releases) page
 2. Enable "Install from unknown sources" in your Android settings
 3. Install the APK file
 
 ### Building from Source
 ```bash
-git clone https://github.com/pixelarry/itinerary_planner.git
+git clone https://github.com/sanandmv7/itinerary_planner.git
 cd itinerary_planner
 ./gradlew assembleDebug
 ```
@@ -66,8 +66,8 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ## Support
 
-- **Bug Reports**: [GitHub Issues](https://github.com/pixelarry/itinerary_planner/issues)
-- **Feature Requests**: [GitHub Discussions](https://github.com/pixelarry/itinerary_planner/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/sanandmv7/itinerary_planner/issues)
+- **Feature Requests**: [GitHub Discussions](https://github.com/sanandmv7/itinerary_planner/discussions/categories/ideas)
 - **General Support**: [Contact Form](https://forms.gle/qKYahftqpdnrLhZ49)
 
 **Made with ❤️ for the open source community**

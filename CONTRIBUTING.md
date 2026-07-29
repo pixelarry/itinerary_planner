@@ -48,7 +48,7 @@ Before contributing, ensure you have:
    ```
 3. Add the upstream repository:
    ```bash
-   git remote add upstream https://github.com/pixelarry/itinerary_planner.git
+   git remote add upstream https://github.com/sanandmv7/itinerary_planner.git
    ```
 
 ## Development Setup
