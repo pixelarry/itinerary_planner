@@ -49,7 +49,7 @@ Found a bug or have a feature request? Please [open an issue](https://github.com
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
 
-    Copyright (C) 2026 Pixelarry
+    Copyright (C) 2025-2026 sanandmv7
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
