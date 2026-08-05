@@ -17,6 +17,8 @@
 
 package com.pixelarry.itinerary_planner.ui
 
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,7 +87,29 @@ class ItineraryAdapter(
             }
 
             taskTitle.text = task.title
-            taskTime.text = "${timeFormat.format(task.startTime)} - ${timeFormat.format(task.endTime)}"
+            
+            // Detect overnight tasks: compare hour-of-day of start vs end
+            val startCal = Calendar.getInstance().apply { time = task.startTime }
+            val endCal = Calendar.getInstance().apply { time = task.endTime }
+            val isOvernight = endCal.get(Calendar.HOUR_OF_DAY) * 60 + endCal.get(Calendar.MINUTE) <
+                              startCal.get(Calendar.HOUR_OF_DAY) * 60 + startCal.get(Calendar.MINUTE) ||
+                              (task.duration > 0 &&
+                               endCal.get(Calendar.DAY_OF_YEAR) != startCal.get(Calendar.DAY_OF_YEAR))
+            if (isOvernight) {
+                val endFormatted = timeFormat.format(task.endTime)
+                val fullText = "${timeFormat.format(task.startTime)} - $endFormatted +1 Day"
+                val spannable = android.text.SpannableStringBuilder(fullText)
+                val plusOneDayStart = fullText.indexOf(" +1 Day")
+                spannable.setSpan(
+                    ForegroundColorSpan(itemView.context.getColor(R.color.fab_blue)),
+                    plusOneDayStart,
+                    fullText.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                taskTime.text = spannable
+            } else {
+                taskTime.text = "${timeFormat.format(task.startTime)} - ${timeFormat.format(task.endTime)}"
+            }
             
             val durationHours = task.duration / 60
             val durationMinutes = task.duration % 60

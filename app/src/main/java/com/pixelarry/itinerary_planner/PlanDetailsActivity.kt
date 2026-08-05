@@ -314,22 +314,6 @@ class PlanDetailsActivity : AppCompatActivity() {
                     val calendar = Calendar.getInstance()
                     calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                     calendar.set(Calendar.MINUTE, minute)
-                    
-                    // Check if end time is before start time
-                    val startTimeText = startTimeInput.text.toString()
-                    if (startTimeText.isNotEmpty()) {
-                        val startTimeDate = timeFormat.parse(startTimeText)
-                        if (startTimeDate != null) {
-                            val startCalendar = Calendar.getInstance()
-                            startCalendar.time = startTimeDate
-                            
-                            if (calendar.before(startCalendar) || calendar.equals(startCalendar)) {
-                                Toast.makeText(this, "End time must be after start time", Toast.LENGTH_SHORT).show()
-                                return@TimePickerDialog
-                            }
-                        }
-                    }
-                    
                     endTimeInput.setText(timeFormat.format(calendar.time))
                 },
                 today.get(Calendar.HOUR_OF_DAY),
@@ -369,10 +353,9 @@ class PlanDetailsActivity : AppCompatActivity() {
                 val endCalendar = Calendar.getInstance()
                 endCalendar.time = endTimeDate
                 
-                // Validate that end time is after start time
-                if (endCalendar.before(startCalendar) || endCalendar.equals(startCalendar)) {
-                    Toast.makeText(this, "End time must be after start time", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
+                // If end time is before or equal to start time, assume it crosses midnight (+1 day)
+                if (!endCalendar.after(startCalendar)) {
+                    endCalendar.add(Calendar.DAY_OF_MONTH, 1)
                 }
                 
                 val duration = ((endCalendar.timeInMillis - startCalendar.timeInMillis) / (1000 * 60)).toLong()
@@ -380,8 +363,8 @@ class PlanDetailsActivity : AppCompatActivity() {
                 val task = Task(
                     planId = planId,
                     title = title,
-                    startTime = startTimeDate,
-                    endTime = endTimeDate,
+                    startTime = startCalendar.time,
+                    endTime = endCalendar.time,
                     duration = duration,
                     cost = cost,
                     date = date,
@@ -548,21 +531,6 @@ class PlanDetailsActivity : AppCompatActivity() {
                     val calendar = Calendar.getInstance()
                     calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                     calendar.set(Calendar.MINUTE, minute)
-
-                    val startTimeText = startTimeInput.text.toString()
-                    if (startTimeText.isNotEmpty()) {
-                        val startTimeDate = timeFormat.parse(startTimeText)
-                        if (startTimeDate != null) {
-                            val startCalendar = Calendar.getInstance()
-                            startCalendar.time = startTimeDate
-
-                            if (calendar.before(startCalendar) || calendar == startCalendar) {
-                                Toast.makeText(this, "End time must be after start time", Toast.LENGTH_SHORT).show()
-                                return@TimePickerDialog
-                            }
-                        }
-                    }
-
                     endTimeInput.setText(timeFormat.format(calendar.time))
                 },
                 currentEndTime.get(Calendar.HOUR_OF_DAY),
@@ -599,17 +567,17 @@ class PlanDetailsActivity : AppCompatActivity() {
                 val endCalendar = Calendar.getInstance()
                 endCalendar.time = endTimeDate
 
-                if (endCalendar.before(startCalendar) || endCalendar == startCalendar) {
-                    Toast.makeText(this, "End time must be after start time", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
+                // If end time is before or equal to start time, assume it crosses midnight (+1 day)
+                if (!endCalendar.after(startCalendar)) {
+                    endCalendar.add(Calendar.DAY_OF_MONTH, 1)
                 }
 
                 val duration = ((endCalendar.timeInMillis - startCalendar.timeInMillis) / (1000 * 60)).toLong()
 
                 val updatedTask = task.copy(
                     title = title,
-                    startTime = startTimeDate,
-                    endTime = endTimeDate,
+                    startTime = startCalendar.time,
+                    endTime = endCalendar.time,
                     duration = duration,
                     cost = cost,
                     date = date,
